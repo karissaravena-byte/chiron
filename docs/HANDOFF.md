@@ -48,14 +48,16 @@ framework specs).
 
 ## 2. Next task (overwrite on each handoff)
 
-1. **Raya testing (partly blocked, B-013).** The hosted container can't resolve the database
-   host from AgentBase's network (`EAI_AGAIN`); waiting on the AgentBase team. Our side is fixed
-   (D-023: no Mastra storage, so the agent stays up and replies that the tracker couldn't be
-   reached); after it is pushed, Karissa presses **Pull latest & redeploy**. Runtime logs: the
-   agent's Operate → Runtime Logs → Stream logs. Next: one chat in Studio's Run tab, then the same
-   in Raya (how Raya reaches an "Only me" imported agent is unconfirmed). Drafts are reviewed in the local web app (same
-   database). Test one fake ID number in Raya (B-011). Redeploying a new commit: the agent's
-   Build → Source → **Pull latest & redeploy**. Then delete the Raya-made Chirons.
+1. **Raya testing: passed (2026-11-12, CH-SMOKE-3).** In Raya, @chiron saved the Nico Ramos test
+   hire and blocked a fake TIN with the "please delete" reply. Left to do: set chiron's access back
+   to "Only me" when testing ends; delete the Raya-made Chirons; tidy test hires if wanted.
+   Background: hosted `chiron` also works end to end in Studio: `676e52e` is
+   deployed (container up since 02:43Z 2026-11-12; Studio's "Deployed commit" field lagged at
+   `28a54ba`, so trust the runtime logs), and a Studio chat saved the Lia Mendoza test hire to
+   the tracker. The earlier containers' database lookups failed (`EAI_AGAIN`, B-013); the new one
+   resolves it. If it recurs, Chiron now stays up and says nothing was saved (D-023). Runtime
+   logs: the agent's Operate → Runtime Logs → Stream logs. Raya's agent search (sidebar → Agents → Browse all) lists agents shared with the organisation, not "Only me" ones; chiron's access is temporarily "Organization" (2026-11-12; Raya picked it up after a minute or two; revert to "Only me" after testing). Do NOT "Publish publicly": that is the public registry, beyond 917V. Drafts are reviewed in the local web app (same
+   database). Redeploying a new commit: the agent's Build → Source → **Pull latest & redeploy**.
 2. Load Karissa's real "Checklist by type", request templates, welcome emails and 1:1 contact
    list as versioned playbook entries (F4, F6, D-007), replacing the sample wording.
 3. Record step facts (F9: BI processed, IT confirmed, Form A submitted …) on the Talent page,
