@@ -31,11 +31,13 @@ Built from them:
   Playwright 12/13 against the live preview (B-008 is a starter test that expects no database).
 
 - **Pushed (2026-11-12):** `develop` is on a private GitHub repo, `karissaravena-byte/chiron`
-  (remote `origin`). Not yet imported into AgentBase; `PRECAST_LOCAL_AGENTS` is still `1`.
+  (remote `origin`). **Hosted (2026-11-12):** imported into AgentBase as `chiron` (Imported,
+  Production, "Only me"), Synced and Running on `28a54ba`. The local web app still uses local
+  agents (`PRECAST_LOCAL_AGENTS=1`) and reads the same database.
   First CI run: `verify` and both Docker images passed; `e2e` failed (B-012: no database in CI,
   and the home page read the tracker before the sign-in redirect). **Fixed:** pages call
-  `requireUser()` first (CH-WEB-3), signed-in e2e specs skip without sign-in; green locally under
-  CI conditions, to confirm on the next push.
+  `requireUser()` first (CH-WEB-3), signed-in e2e specs skip without sign-in. GitHub CI is fully
+  green on `28a54ba`.
 
 _Known carry-forwards:_ see PROGRESS blockers B-001 (four `Not Started` rows), B-007 (open
 sign-up; SSO before hosting the web app), B-008, B-009 (local test approver in `.env`), B-011
@@ -46,12 +48,14 @@ framework specs).
 
 ## 2. Next task (overwrite on each handoff)
 
-1. **Raya testing (in progress).** Karissa imports the agent in AgentBase Studio: Variables →
-   namespace `chiron`, Production, `DATABASE_URL` from `.env`; Agents → Import from Repo,
-   `develop`; subscribe to the Chiron listing. Raya's side is unknown: ask Raya's owner which
-   Application Raya calls agents with, and subscribe that one. Only the agent is hosted; drafts
-   are reviewed in the local web app (same database). Then test one fake ID number in Raya (B-011).
-   Keep `PRECAST_LOCAL_AGENTS=1` until the import has succeeded.
+1. **Raya testing (partly blocked, B-013).** The hosted container can't resolve the database
+   host from AgentBase's network (`EAI_AGAIN`); waiting on the AgentBase team. Our side is fixed
+   (D-023: no Mastra storage, so the agent stays up and replies that the tracker couldn't be
+   reached); after it is pushed, Karissa presses **Pull latest & redeploy**. Runtime logs: the
+   agent's Operate → Runtime Logs → Stream logs. Next: one chat in Studio's Run tab, then the same
+   in Raya (how Raya reaches an "Only me" imported agent is unconfirmed). Drafts are reviewed in the local web app (same
+   database). Test one fake ID number in Raya (B-011). Redeploying a new commit: the agent's
+   Build → Source → **Pull latest & redeploy**. Then delete the Raya-made Chirons.
 2. Load Karissa's real "Checklist by type", request templates, welcome emails and 1:1 contact
    list as versioned playbook entries (F4, F6, D-007), replacing the sample wording.
 3. Record step facts (F9: BI processed, IT confirmed, Form A submitted …) on the Talent page,

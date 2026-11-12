@@ -28,6 +28,10 @@ export async function chironDb(connectionString = process.env.DATABASE_URL): Pro
       url = u.toString();
     }
     pool = new pg.Pool({ connectionString: url, max: 4, ...(ssl === undefined ? {} : { ssl }) });
+    // An idle client whose connection drops (database restart, network blip) emits 'error' on
+    // the pool. With no listener Node treats that as uncaught and the whole process exits. pg
+    // already discards that client and opens a fresh one on the next query, so nothing to do.
+    pool.on('error', () => {});
     db = drizzle(pool, { schema: chironSchema });
   }
   ready ??= migrateChironDb(pool).then(() => undefined);

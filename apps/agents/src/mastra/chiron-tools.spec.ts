@@ -35,6 +35,12 @@ describe('Chiron sees only its own tools (CH-AGT-2)', () => {
     expect(chiron).not.toMatch(/\bmemory\s*:/);
   });
 
+  it('gives Mastra no storage, so an unreachable database cannot stop the agent (D-023, CH-AGT-3)', () => {
+    const index = read('index.ts');
+    expect(index).not.toMatch(/^\s*storage\s*:/m);
+    expect(index).not.toMatch(/getMastraStore/);
+  });
+
   it("none of Chiron's tools reach a connector on behalf of the caller", () => {
     const sources = [...filesUnder('tools'), ...filesUnder('onboarding')]
       .filter((f) => !/example-tool|show-card/.test(f))

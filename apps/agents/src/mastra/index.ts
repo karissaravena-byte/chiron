@@ -2,7 +2,6 @@ import { startAgentTelemetry } from './telemetry/otel';
 import { Mastra } from '@mastra/core/mastra';
 import { PinoLogger } from '@mastra/loggers';
 import { parseApiEnv } from '@precast/shared';
-import { getMastraStore } from './lib/storage';
 import { agentAuthMiddleware, assertAgentApiAuthConfigured } from './middleware/auth';
 import { a2uiMiddleware } from './middleware/a2ui';
 import { telemetryMiddleware } from './middleware/telemetry';
@@ -77,10 +76,12 @@ const LOG_LEVEL_MAP = {
  */
 export const mastra = new Mastra({
   agents: crewAgents(crew),
-  // Durable Postgres store for everything Mastra persists (threads, messages,
-  // working memory, workflow state). The same instance is handed to each
-  // agent's Memory so the process keeps one connection pool — see lib/storage.ts.
-  storage: getMastraStore(),
+  // Chiron: no Mastra storage (D-023). Precast's default is a Postgres store for threads, memory
+  // and workflow state, initialised at boot, where an unreachable database ends the process
+  // (B-013). Chiron uses none of those: it keeps no chat memory (D-012), A2A tasks live in memory,
+  // and its records go to the tracker, which connects on first use and reports failure as a reply.
+  // So the agent stays up and answers even when the database is down, and chat text is never
+  // written to Mastra's tables. Guarded by chiron-tools.spec.ts.
   logger: new PinoLogger({
     name: 'chiron-agents',
     level: LOG_LEVEL_MAP[env.LOG_LEVEL],

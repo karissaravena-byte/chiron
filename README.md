@@ -11,6 +11,10 @@ and saves them to its tracker. Karissa reviews each draft, fills the blanks, app
 version, and (until Gmail is connected) sends it herself and marks it sent. Every draft goes to
 Karissa while pilot mode is on.
 
+**Hosted:** the agent runs on AgentBase as `chiron` (imported from this repo; new commits need
+**Pull latest & redeploy** in Studio). It keeps no chat memory and no Mastra storage, so it still
+answers when the database can't be reached, and says nothing was saved.
+
 Run it: `pnpm poc` (prints the URLs). Tests: `pnpm test`; browser tests against the running
 preview: `E2E_HOST=localhost pnpm --filter @precast/web exec playwright test` (set
 `E2E_APPROVER_EMAIL` / `E2E_APPROVER_PASSWORD` to an approver account to include the approval
