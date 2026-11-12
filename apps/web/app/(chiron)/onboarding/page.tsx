@@ -5,11 +5,13 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { chironDb, listOnboardings } from '@precast/shared/server';
 import { TALENT_TYPE_LABEL, formatDay } from '../../lib/chiron-ui';
+import { requireUser } from '../../lib/session';
 import { TEST_HIRES } from '../../lib/test-hires';
 import { OnboardingTable } from './OnboardingTable';
 import { TestHirePanel } from './TestHirePanel';
 
 export default async function OnboardingPage() {
+  await requireUser();
   const rows = await listOnboardings(await chironDb());
   const tableRows = rows.map((r) => ({
     id: r.onboardingId,

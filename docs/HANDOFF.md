@@ -30,21 +30,35 @@ Built from them:
 - **Verified:** lint, typecheck, build; Vitest shared 65 · a2ui 34 · web 358 · agents 168;
   Playwright 12/13 against the live preview (B-008 is a starter test that expects no database).
 
+- **Pushed (2026-11-12):** `develop` is on a private GitHub repo, `karissaravena-byte/chiron`
+  (remote `origin`). Not yet imported into AgentBase; `PRECAST_LOCAL_AGENTS` is still `1`.
+  First CI run: `verify` and both Docker images passed; `e2e` failed (B-012: no database in CI,
+  and the home page read the tracker before the sign-in redirect). **Fixed:** pages call
+  `requireUser()` first (CH-WEB-3), signed-in e2e specs skip without sign-in; green locally under
+  CI conditions, to confirm on the next push.
+
 _Known carry-forwards:_ see PROGRESS blockers B-001 (four `Not Started` rows), B-007 (open
-sign-up; SSO before hosting), B-008, B-009 (local test approver in `.env`); D-004 (placeholder
-agents still on disk as fixtures for framework specs).
+sign-up; SSO before hosting the web app), B-008, B-009 (local test approver in `.env`), B-011
+(screen's reply to a streaming caller); D-004 (placeholder agents still on disk as fixtures for
+framework specs).
 
 ---
 
 ## 2. Next task (overwrite on each handoff)
 
-1. Load Karissa's real "Checklist by type", request templates, welcome emails and 1:1 contact
+1. **Raya testing (in progress).** Karissa imports the agent in AgentBase Studio: Variables →
+   namespace `chiron`, Production, `DATABASE_URL` from `.env`; Agents → Import from Repo,
+   `develop`; subscribe to the Chiron listing. Raya's side is unknown: ask Raya's owner which
+   Application Raya calls agents with, and subscribe that one. Only the agent is hosted; drafts
+   are reviewed in the local web app (same database). Then test one fake ID number in Raya (B-011).
+   Keep `PRECAST_LOCAL_AGENTS=1` until the import has succeeded.
+2. Load Karissa's real "Checklist by type", request templates, welcome emails and 1:1 contact
    list as versioned playbook entries (F4, F6, D-007), replacing the sample wording.
-2. Record step facts (F9: BI processed, IT confirmed, Form A submitted …) on the Talent page,
+3. Record step facts (F9: BI processed, IT confirmed, Form A submitted …) on the Talent page,
    then the C3 activation reminder and C4 drafts.
-3. Connect Gmail as chiron@917ventures.com through the F37 gate (F13 + kind timing).
-4. Before anyone but Karissa can reach the app: SSO sign-in (B-007), remove the test approver
-   (B-009), push to a private GitHub repo, import into AgentBase.
+4. Connect Gmail as chiron@917ventures.com through the F37 gate (F13 + kind timing).
+5. Before anyone but Karissa can reach the web app: SSO sign-in (B-007), remove the test
+   approver (B-009).
 
 ---
 

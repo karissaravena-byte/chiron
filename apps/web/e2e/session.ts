@@ -1,4 +1,16 @@
-import { expect, type Page } from '@playwright/test';
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
+
+/**
+ * Sign-in needs a database and a secret. CI's test server has neither, by design, so specs that
+ * sign in skip there; health says which (`signIn`), and only a missing piece skips, not `starting`.
+ */
+export async function skipUnlessSignInWorks(request: APIRequestContext) {
+  const { signIn } = (await (await request.get('/api/health')).json()) as { signIn?: string };
+  test.skip(
+    signIn !== 'ready' && signIn !== 'starting',
+    `Sign-in can't work on this server (${signIn}), so there is no account to test with`,
+  );
+}
 
 /**
  * Real sign-in for browser tests. Chiron's screens check the session on the server, so a stubbed

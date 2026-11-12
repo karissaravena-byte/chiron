@@ -1,13 +1,16 @@
 import { expect, test } from '@playwright/test';
-import { freshAccount, signIn, signUp } from './session';
+import { freshAccount, signIn, signUp, skipUnlessSignInWorks } from './session';
 
 /**
  * Chiron's screens end to end, against the running app, its tracker and the live agent.
  * The approver flow needs an account on CHIRON_APPROVERS: set E2E_APPROVER_EMAIL and
  * E2E_APPROVER_PASSWORD (locally, the preview test account) or that test is skipped.
+ * All of these need sign-in, so they skip on a server without a database (CI).
  */
 
 test.describe('Chiron screens (CH-E2E-1)', () => {
+  test.beforeEach(async ({ request }) => skipUnlessSignInWorks(request));
+
   test('a signed-in non-approver sees the queue, the menu and test hires, and cannot approve', async ({
     page,
   }) => {

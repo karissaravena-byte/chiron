@@ -7,9 +7,11 @@ import { Heading } from '@astryxdesign/core/Heading';
 import { Text } from '@astryxdesign/core/Text';
 import { chironDb, listWaitingForYou } from '@precast/shared/server';
 import { DRAFT_STATUS_LABEL, formatDay, manilaToday } from '../lib/chiron-ui';
+import { requireUser } from '../lib/session';
 
 /** Home (D-016): one queue of everything that needs Karissa. Oldest deadline first. */
 export default async function WaitingForYou() {
+  await requireUser();
   const { drafts, holidays } = await listWaitingForYou(await chironDb());
   const today = manilaToday();
 

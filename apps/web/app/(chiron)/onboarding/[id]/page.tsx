@@ -15,6 +15,7 @@ import {
   isClosedStep,
   manilaToday,
 } from '../../../lib/chiron-ui';
+import { requireUser } from '../../../lib/session';
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -25,6 +26,7 @@ export default async function TalentPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ again?: string }>;
 }) {
+  await requireUser();
   const { id } = await params;
   const { again } = await searchParams;
   if (!UUID.test(id)) notFound();

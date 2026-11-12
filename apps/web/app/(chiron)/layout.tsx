@@ -4,7 +4,11 @@ import { requireUser } from '../lib/session';
 import { log } from '../lib/logger';
 import { ChironShell } from './ChironShell';
 
-/** Every Chiron screen needs sign-in; the side menu shows how much is waiting. */
+/**
+ * Every Chiron screen needs sign-in; the side menu shows how much is waiting. Next renders a
+ * layout and its page in parallel, so this check does not protect a page: each page that reads
+ * the tracker calls `requireUser()` itself first (guarded by test/chiron-pages-auth.spec.ts).
+ */
 export default async function ChironLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
   let waiting = 0;

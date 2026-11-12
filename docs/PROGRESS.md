@@ -2,8 +2,8 @@
 
 > **This file is the ultimate cross-tool context memory.** All coding agents MUST update this file on every meaningful change. If you finish work without updating PROGRESS.md, the work is **not** considered complete.
 
-**Last Updated:** 2026-11-11
-**Updated By:** Claude Code (scaffold from PRD + Phase 1 PoC slice)
+**Last Updated:** 2026-11-12
+**Updated By:** Claude Code (pushed to private GitHub; preparing the AgentBase import for Raya testing)
 **Active Branch:** develop
 
 ---
@@ -46,7 +46,7 @@ You MUST update PROGRESS.md when you:
 | **Project**       | chiron (917V's People Ops agent)                                                                                                                   |
 | **Mission**       | Prepare every onboarding, offboarding and monthly manpower step for Karissa to approve, so no step is missed and no position stays open unnoticed. |
 | **Owner**         | Karissa (approver); Mikki is backup approver                                                                                                       |
-| **Hosting**       | AgentBase hosts it (Imported); private GitHub repo, not yet pushed                                                                                 |
+| **Hosting**       | AgentBase hosts it (Imported), not yet imported. Private GitHub repo `karissaravena-byte/chiron`, `develop` pushed 2026-11-12                      |
 | **AgentBase app** | Application `chiron` (its own, separate from other projects); subscribed to the model + the database agent only                                    |
 | **Model**         | `gemini-35-flash-dd840ef8` (gemini-3.5-flash). PRD asked for Claude; none is in the org catalogue yet (D-001)                                      |
 | **Database**      | Provisioned by AgentBase's database agent on 2026-11-10; URL in `.env` only                                                                        |
@@ -87,6 +87,8 @@ You MUST update PROGRESS.md when you:
 - [x] Screens: side menu, Waiting for you, Onboarding table, Talent page, Draft review; Holidays/Playbook/Settings stubs
 - [x] Interfaces for unbuilt functions (`tools/planned.ts`, not given to the model)
 - [x] Removed placeholder chat UI and its tests; rewrote home e2e; added Chiron e2e
+- [x] Pushed `develop` to a private GitHub repo, `karissaravena-byte/chiron` (2026-11-12)
+- [ ] Next: import the agent into AgentBase (namespace `chiron` with `DATABASE_URL`), subscribe to its listing, and connect it in Raya so Karissa can test there; confirm with Raya's owner how Raya reaches a hosted agent
 - [ ] Next: Karissa's real checklist, templates, welcome emails and contact list as playbook data (F4, F6, D-007)
 - [ ] Next: record step facts (F9), then C3/C4 drafts
 - [ ] Before anyone else can reach the app: SSO sign-in instead of open email sign-up (B-007)
@@ -125,30 +127,34 @@ You MUST update PROGRESS.md when you:
 
 ## 5. Known Blockers
 
-| ID    | Blocker                                                                                                                                                                                             | Impact                                                                             | Workaround                                                                                  |
-| ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| B-001 | Remaining `Not Started` rows: CH-ON-5, CH-AGT-1, CH-SHR-1, CH-GUARD-4 (TEST_CASES.md)                                                                                                               | ON-5 and GUARD-4 wait for C4 and Calendar; AGT-1/SHR-1 are covered end to end only | Add isolated unit tests with the next agent change                                          |
-| B-002 | Mocks/stand-ins: test hires replace Argus's A2A handoff; draft wording is sample text; no holiday table (start dates only flagged for manual check)                                                 | Drafts aren't Karissa's real wording                                               | Load her templates + checklist as data files; connect Argus over A2A; add the holiday table |
-| B-003 | Precast upstream: APC `--color-overlay-hover/pressed` and `--color-tint-hover` are opaque                                                                                                           | Hover/selected states hide content in every Precast project                        | Local override (D-003); fix belongs in Precast's `apc.tokens.json`                          |
-| B-004 | No Claude model in the org's AgentBase catalogue                                                                                                                                                    | Runs on gemini-3.5-flash                                                           | Ask the AgentBase admin to onboard one, then change `AGENTBASE_LLM_MODEL`                   |
-| B-006 | ~~Precast default hands subscribed connector tools to the model, on behalf of the signed-in person~~ **Resolved 2026-11-11**: `CHIRON_TOOLS` only, no OBO from Chiron's routes, guarded by CH-AGT-2 | —                                                                                  | —                                                                                           |
-| B-005 | ~~Example chat e2e specs target the replaced home page~~ **Resolved 2026-11-11**: removed with the chat UI; home spec rewritten                                                                     | —                                                                                  | —                                                                                           |
-| B-007 | Sign-in is open email/password: anyone who can reach the app can register any address, including an approver's                                                                                      | Approvals are only as trustworthy as sign-in                                       | Fine on 127.0.0.1. Before hosting: organisation SSO (`OIDC_*`), disable open sign-up        |
-| B-008 | Starter e2e `a2a-route.spec.ts` "health route" expects a server with no database, so it fails when reusing the configured local preview                                                             | 1 of 13 e2e tests red locally                                                      | Passes in CI (no database). Leave, or run e2e against a fresh `next dev`                    |
-| B-010 | Precast upstream: APC dark-mode `--color-{warning,error,success}-muted` are saturated, so banners are unreadable in dark mode in every theme                                                        | Every Precast project's dark banners                                               | Local override (D-022); fix belongs in Precast's `apc.tokens.json`, with B-003              |
-| B-009 | Local `.env` lists `preview@chiron.test` as an approver (stand-in for Karissa, for local testing)                                                                                                   | Must not reach a shared deployment                                                 | Remove from `CHIRON_APPROVERS` before hosting                                               |
+| ID    | Blocker                                                                                                                                                                                                                                                                                                                          | Impact                                                                             | Workaround                                                                                  |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| B-001 | Remaining `Not Started` rows: CH-ON-5, CH-AGT-1, CH-SHR-1, CH-GUARD-4 (TEST_CASES.md)                                                                                                                                                                                                                                            | ON-5 and GUARD-4 wait for C4 and Calendar; AGT-1/SHR-1 are covered end to end only | Add isolated unit tests with the next agent change                                          |
+| B-002 | Mocks/stand-ins: test hires replace Argus's A2A handoff; draft wording is sample text; no holiday table (start dates only flagged for manual check)                                                                                                                                                                              | Drafts aren't Karissa's real wording                                               | Load her templates + checklist as data files; connect Argus over A2A; add the holiday table |
+| B-003 | Precast upstream: APC `--color-overlay-hover/pressed` and `--color-tint-hover` are opaque                                                                                                                                                                                                                                        | Hover/selected states hide content in every Precast project                        | Local override (D-003); fix belongs in Precast's `apc.tokens.json`                          |
+| B-004 | No Claude model in the org's AgentBase catalogue                                                                                                                                                                                                                                                                                 | Runs on gemini-3.5-flash                                                           | Ask the AgentBase admin to onboard one, then change `AGENTBASE_LLM_MODEL`                   |
+| B-006 | ~~Precast default hands subscribed connector tools to the model, on behalf of the signed-in person~~ **Resolved 2026-11-11**: `CHIRON_TOOLS` only, no OBO from Chiron's routes, guarded by CH-AGT-2                                                                                                                              | —                                                                                  | —                                                                                           |
+| B-005 | ~~Example chat e2e specs target the replaced home page~~ **Resolved 2026-11-11**: removed with the chat UI; home spec rewritten                                                                                                                                                                                                  | —                                                                                  | —                                                                                           |
+| B-007 | Sign-in is open email/password: anyone who can reach the app can register any address, including an approver's                                                                                                                                                                                                                   | Approvals are only as trustworthy as sign-in                                       | Fine on 127.0.0.1. Before hosting: organisation SSO (`OIDC_*`), disable open sign-up        |
+| B-008 | Starter e2e `a2a-route.spec.ts` "health route" expects a server with no database, so it fails when reusing the configured local preview                                                                                                                                                                                          | 1 of 13 e2e tests red locally                                                      | Passes in CI (no database). Leave, or run e2e against a fresh `next dev`                    |
+| B-010 | Precast upstream: APC dark-mode `--color-{warning,error,success}-muted` are saturated, so banners are unreadable in dark mode in every theme                                                                                                                                                                                     | Every Precast project's dark banners                                               | Local override (D-022); fix belongs in Precast's `apc.tokens.json`, with B-003              |
+| B-009 | Local `.env` lists `preview@chiron.test` as an approver (stand-in for Karissa, for local testing)                                                                                                                                                                                                                                | Must not reach a shared deployment                                                 | Remove from `CHIRON_APPROVERS` before hosting                                               |
+| B-011 | The sensitive-input screen answers with a plain JSON-RPC reply, even to `message/stream`. A streaming caller (possibly Raya) expects an event stream                                                                                                                                                                             | The "please delete that" reply may show as an error; the model still never sees it | Try one fake ID number in Raya after import; if it errors, answer stream calls as SSE       |
+| B-012 | ~~CI `e2e` job red: CI has no database, and `(chiron)/page.tsx` queried the tracker while the layout's sign-in redirect ran in parallel, so `/` answered 500~~ **Fixed 2026-11-12**: pages call `requireUser()` first (CH-WEB-3); signed-in specs skip without sign-in. Green locally in CI conditions; confirm on the next push | —                                                                                  | —                                                                                           |
 
 ---
 
 ## 6. Test Coverage
 
-| Area                    | Tests                                                          | Status  |
-| ----------------------- | -------------------------------------------------------------- | ------- |
-| All Vitest (2026-11-11) | shared 65 · a2ui 34 · web 358 (+1 skipped) · agents 168        | Passing |
-| Playwright (2026-11-11) | 13 specs against the live preview: 12 passing, 1 known (B-008) | 12/13   |
-| Lint, typecheck, build  | `pnpm lint`, `pnpm verify:poc`, `pnpm build`                   | Passing |
-| Web/shared (Vitest)     | `apps/web/test/**` — env schema + fitness guards               | Passing |
-| E2E (Playwright)        | `apps/web/e2e/**` — home page                                  | Passing |
+| Area                    | Tests                                                                     | Status  |
+| ----------------------- | ------------------------------------------------------------------------- | ------- |
+| All Vitest (2026-11-12) | shared 65 · a2ui 34 · web 363 (+1 skipped) · agents 168                   | Passing |
+| Playwright (2026-11-12) | 13 specs against the live preview: 12 passing, 1 known (B-008)            | 12/13   |
+| Playwright, CI-like     | Fresh server, no database or secret: 10 passing, 3 skipped (need sign-in) | Passing |
+| GitHub CI (first run)   | `verify` + both Docker images green; `e2e` red (B-012, since fixed)       | Partial |
+| Lint, typecheck, build  | `pnpm lint`, `pnpm verify:poc`, `pnpm build`                              | Passing |
+| Web/shared (Vitest)     | `apps/web/test/**` — env schema + fitness guards                          | Passing |
+| E2E (Playwright)        | `apps/web/e2e/**` — home page                                             | Passing |
 
 ---
 
@@ -166,6 +172,40 @@ You MUST update PROGRESS.md when you:
 
 ## 8. Session Log
 
+<auto-journal: 2026-11-12 00:46:50 — file edit>
+<auto-journal: 2026-11-12 00:45:49 — file edit>
+
+<auto-journal: 2026-11-12 00:45:48 — file edit>
+
+<auto-journal: 2026-11-12 00:45:46 — file edit>
+
+<auto-journal: 2026-11-12 00:45:42 — file edit>
+
+<auto-journal: 2026-11-12 00:45:39 — file edit>
+
+<auto-journal: 2026-11-12 00:45:30 — file edit>
+
+<auto-journal: 2026-11-12 00:40:58 — file edit>
+
+<auto-journal: 2026-11-12 00:40:57 — file edit>
+
+<auto-journal: 2026-11-12 00:40:55 — file edit>
+
+<auto-journal: 2026-11-12 00:40:52 — file edit>
+
+<auto-journal: 2026-11-12 00:40:49 — file edit>
+
+<auto-journal: 2026-11-12 00:37:21 — file edit>
+
+<auto-journal: 2026-11-12 00:37:16 — file edit>
+
+<auto-journal: 2026-11-12 00:37:11 — file edit>
+
+<auto-journal: 2026-11-12 00:37:08 — file edit>
+
+<auto-journal: 2026-11-12 00:37:05 — file edit>
+
+<auto-journal: 2026-11-12 00:37:04 — file edit>
 <auto-journal: 2026-11-11 09:49:09 — file edit>
 
 <auto-journal: 2026-11-11 09:48:32 — file edit>
@@ -201,6 +241,10 @@ You MUST update PROGRESS.md when you:
 <auto-journal: 2026-11-10 08:48:34 — file edit>
 <!-- Newest first. The progress-stamp hook appends <auto-journal> markers here. -->
 
+- **2026-11-12 · Claude Code · Fixed the CI browser tests (B-012) ·** The home, Onboarding and Talent pages now call `requireUser()` before reading the tracker; Next renders a layout and its page in parallel, so the layout's check alone let a signed-out request query the database (nothing was shown; the redirect won). New guard CH-WEB-3. Chiron's signed-in e2e specs skip when `/api/health` says sign-in can't work. **Verified:** web typecheck, lint, Vitest 363 (+1 skipped); Playwright CI-like (no database) 10 passed, 3 skipped; against the live preview 12/13 (B-008). Preview refreshed. · `apps/web/app/(chiron)/{page,layout,onboarding/page,onboarding/[id]/page}.tsx`, `apps/web/test/chiron-pages-auth.spec.ts`, `apps/web/e2e/{session,chiron.spec}.ts`, docs
+
+- **2026-11-12 · Claude Code · Pushed to private GitHub for Raya testing ·** Committed the Phase 1 build (`fcd4ad9`) and pushed `develop` to the private repo `karissaravena-byte/chiron`. First CI run: `verify` (typecheck, lint, unit tests, build) and both Docker images (`agents`, `web`) **passed**, so the image AgentBase builds on import is known to build. `e2e` **failed** (B-012): no database in CI and the home page reads the tracker before the sign-in redirect lands. Logged B-011 (screen reply to streaming callers). Next: Karissa imports the agent in AgentBase Studio and connects it in Raya. · docs/PROGRESS.md, docs/HANDOFF.md
+
 - **2026-11-11 · Claude Code · Phase 1 foundations built from the approved docs ·** Locked connectors (Chiron sees only `CHIRON_TOOLS`; no on-behalf-of; no memory). Added the sensitive-data detector and inbound screen. Created the tracker (11 tables, `chiron_app`, Drizzle + embedded migrations) and saved handoffs to it (idempotent per handoff ref). Added approvals by exact version, the send gate (pilot lock, blanks, stale approvals), kind-timing rule, Mark as sent. New screens: side menu, Waiting for you, Onboarding table, Talent page, Draft review, plus Holidays/Playbook/Settings stubs. Interfaces for unbuilt tools in `tools/planned.ts`. Removed the placeholder chat UI. Found and fixed: drafts with blanks could be approved (D-019); dark-mode warning banners were unreadable (D-022). **Verified:** lint, typecheck, build, all Vitest, 12/13 Playwright (B-008). Advisory Precast files touched (port by hand on upgrade): `packages/shared/src/{database,env}.ts`, `packages/shared/package.json`, `.env.example`. · `packages/shared/src/{sensitive,chiron-rules,server}.ts`, `packages/shared/src/chiron-db/*`, `apps/agents/src/mastra/{agents/chiron.ts,tools/*,middleware/sensitive-input.ts,chiron-tools.spec.ts,index.ts}`, `apps/web/app/{(chiron)/**,api/drafts/**,lib/{session,chiron-ui,test-hires}.ts}`, `apps/web/e2e/*`, docs
 
 - **2026-11-11 · Claude Code · DESIGN_SYSTEM approved; Stage 2 complete ·** Karissa approved all four design calls (D-015..D-018). All three feed-forward docs approved. Starting the build.
@@ -227,6 +271,7 @@ You MUST update PROGRESS.md when you:
 
 | Date       | Agent       | Context                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-12 | Claude Code | **Pushed to private GitHub; AgentBase import is Karissa's next click.** CI: images and verify green, e2e red (B-012, fix proposed). Keep `PRECAST_LOCAL_AGENTS=1` until the import succeeds. Raya's connection to a hosted agent is unconfirmed: ask Raya's owner.                                                                                                                                                                                                                                                                                                            |
 | 2026-11-11 | Claude Code | **Phase 1 foundations built and verified; showing Karissa the new screens.** Next: her real checklist/templates as playbook data, then step facts (F9) and C3/C4 drafts. Run e2e with `E2E_HOST=localhost` (sign-in trusts localhost only) and approver creds from `.precast/preview-account.txt`.                                                                                                                                                                                                                                                                            |
 | 2026-11-10 | Claude Code | **Chiron PoC at the review gate.** Onboarding screen works end to end on the live model. Next: collect Karissa's reaction, then Stage 2 docs and hardening (B-001). Do not harden before her feedback. Local test sign-in for previews: `.precast/preview-account.txt` (git-ignored).                                                                                                                                                                                                                                                                                         |
 | 2026-08-11 | Claude Code | Orchestrator-crew **Phase 1 done** — in-process orchestrator (`crew-orchestrator`, Mastra Agent Network) scaffolded into the boilerplate via `mastra/crew.ts` + `lib/crew.ts` (`defineCrew`/`crewAgents`) + `agents/orchestrator.ts`; activates at 2+ members, N=1 pass-through; members keep their own cards. Green: typecheck, lint, 51 agents tests, `mastra build`. **Next: Phase 2** — emit the `orchestration` block from `crew.ts` in `scripts/emit-import-manifest.mjs` (plan §8.2). Then mirror to precast-plugin / precast-ground-zero, and AgentBase-side Phase 3. |

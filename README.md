@@ -12,7 +12,10 @@ version, and (until Gmail is connected) sends it herself and marks it sent. Ever
 Karissa while pilot mode is on.
 
 Run it: `pnpm poc` (prints the URLs). Tests: `pnpm test`; browser tests against the running
-preview: `E2E_HOST=localhost pnpm --filter @precast/web exec playwright test`.
+preview: `E2E_HOST=localhost pnpm --filter @precast/web exec playwright test` (set
+`E2E_APPROVER_EMAIL` / `E2E_APPROVER_PASSWORD` to an approver account to include the approval
+flow). Chiron's screens need sign-in, so their browser tests skip on a server without a database,
+which is how GitHub CI runs them; CI still builds both Docker images on every push to `develop`.
 
 ---
 
