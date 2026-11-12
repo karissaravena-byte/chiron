@@ -1,33 +1,29 @@
-import type { Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 /**
- * Sign the page in for a browser test. Chat is shown only to a signed-in
- * person, and these tests stub the agent route, so they stub the session the
- * same way: Better Auth's client reads it from /api/auth/get-session.
+ * Real sign-in for browser tests. Chiron's screens check the session on the server, so a stubbed
+ * client session isn't enough: these create (or reuse) an account through the sign-in page.
  */
-export async function signedIn(page: Page, email = 'tester@example.com'): Promise<void> {
-  await page.route('**/api/auth/get-session*', (route) =>
-    route.fulfill({
-      status: 200,
-      contentType: 'application/json',
-      body: JSON.stringify({
-        session: {
-          id: 's1',
-          userId: 'u1',
-          token: 't',
-          expiresAt: new Date(Date.now() + 3_600_000).toISOString(),
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-        user: {
-          id: 'u1',
-          email,
-          name: 'Tester',
-          emailVerified: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      }),
-    }),
-  );
+export async function signUp(page: Page, email: string, password: string, name = 'E2E Tester') {
+  await page.goto('/sign-in');
+  await page.getByRole('button', { name: 'Create an account instead' }).click();
+  await page.getByLabel('Name').fill(name);
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/$/);
+}
+
+export async function signIn(page: Page, email: string, password: string) {
+  await page.goto('/sign-in');
+  await page.getByLabel('Email').fill(email);
+  await page.getByLabel('Password').fill(password);
+  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await expect(page).toHaveURL(/\/$/);
+}
+
+/** A throwaway, never-approver account for this run. */
+export function freshAccount() {
+  const id = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return { email: `e2e-${id}@chiron.test`, password: `e2e-pass-${id}` };
 }

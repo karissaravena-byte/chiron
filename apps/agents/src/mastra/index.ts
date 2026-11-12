@@ -6,6 +6,8 @@ import { getMastraStore } from './lib/storage';
 import { agentAuthMiddleware, assertAgentApiAuthConfigured } from './middleware/auth';
 import { a2uiMiddleware } from './middleware/a2ui';
 import { telemetryMiddleware } from './middleware/telemetry';
+import { onboardingPrepMiddleware } from './middleware/onboarding-prep';
+import { sensitiveInputMiddleware } from './middleware/sensitive-input';
 import { crew, crewAgents } from './crew';
 import { isAgentBaseLlmConfigured } from './lib/agentbase-model';
 
@@ -90,6 +92,13 @@ export const mastra = new Mastra({
     // too), then static bearer token auth for agent API routes (off when
     // AGENT_API_TOKEN is unset), then A2UI cards. Order matters: auth opens the
     // per-request store that `show_card` writes to and the A2UI middleware reads.
-    middleware: [telemetryMiddleware, agentAuthMiddleware, a2uiMiddleware],
+    middleware: [
+      telemetryMiddleware,
+      agentAuthMiddleware,
+      // Chiron: block private information before the model, memory or logs see it (F36).
+      sensitiveInputMiddleware,
+      a2uiMiddleware,
+      onboardingPrepMiddleware,
+    ],
   },
 });

@@ -1,3 +1,21 @@
+# Chiron
+
+**917V's People Ops agent.** Chiron prepares every onboarding, offboarding and monthly manpower
+step for Karissa to approve, so no step is missed and no position stays open unnoticed. Built on
+Precast (Mastra agents + Next.js on AgentBase). Product docs: [PRD](docs/PRD.md) ·
+[Data model](docs/DATA_MODEL.md) · [Agent spec](docs/AGENT_SPEC.md) · [Design](docs/DESIGN_SYSTEM.md).
+
+**Today (Phase 1, pilot):** a test handoff (standing in for Argus) → Chiron checks the details,
+picks the checklist for the Talent's type, drafts the BI request, welcome email and IT request,
+and saves them to its tracker. Karissa reviews each draft, fills the blanks, approves that exact
+version, and (until Gmail is connected) sends it herself and marks it sent. Every draft goes to
+Karissa while pilot mode is on.
+
+Run it: `pnpm poc` (prints the URLs). Tests: `pnpm test`; browser tests against the running
+preview: `E2E_HOST=localhost pnpm --filter @precast/web exec playwright test`.
+
+---
+
 # Precast
 
 **The kit for building agents on AgentBase.** A Precast project is a TypeScript monorepo with a Mastra agents app, a Next.js web app on the APC Design System, a Postgres database provisioned for it, and a documentation contract that lets any coding agent pick the work up without losing context. It runs on AgentBase: the organisation's gateway supplies the model, the proxy carries every call, and AgentBase hosts the agents once they are imported.

@@ -217,7 +217,7 @@ function buildA2aMessageEnvelope(text: string, options?: CallOptions): unknown {
         // `message.metadata.resourceId`. It defaults to the AGENT ID when absent,
         // which would put every user in one shared memory bucket — so this is
         // load-bearing, not optional. `a2uiClientCapabilities` tells the agent
-        // this app draws `raya.blocks.v1` cards (see AgentCards.tsx).
+        // this app can draw `raya.blocks.v1` cards (no screen draws them yet).
         metadata: {
           ...(resourceId ? { resourceId } : {}),
           a2uiClientCapabilities: a2uiClientCapabilities(),

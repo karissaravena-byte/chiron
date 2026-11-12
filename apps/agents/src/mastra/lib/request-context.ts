@@ -39,6 +39,11 @@ export interface RequestContext {
    * to attach it to the reply. Set by the tool, taken once by the middleware.
    */
   pendingCard?: unknown[];
+  /**
+   * The onboarding prep `prepare_onboarding` produced this turn, waiting for the Chiron result
+   * middleware to attach it to the reply as a data part.
+   */
+  pendingOnboardingPrep?: unknown;
 }
 
 const storage = new AsyncLocalStorage<RequestContext>();
@@ -77,6 +82,22 @@ export function takePendingCard(): unknown[] | undefined {
   const card = store?.pendingCard;
   if (store) delete store.pendingCard;
   return card;
+}
+
+/** Hold this turn's onboarding prep for the reply. False outside a request. */
+export function setPendingOnboardingPrep(prep: unknown): boolean {
+  const store = storage.getStore();
+  if (!store) return false;
+  store.pendingOnboardingPrep = prep;
+  return true;
+}
+
+/** This turn's onboarding prep, removed so it is attached once. */
+export function takePendingOnboardingPrep(): unknown {
+  const store = storage.getStore();
+  const prep = store?.pendingOnboardingPrep;
+  if (store) delete store.pendingOnboardingPrep;
+  return prep;
 }
 
 /**

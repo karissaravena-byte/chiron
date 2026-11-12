@@ -1,5 +1,4 @@
-import { exampleAgent } from './agents/example-agent';
-import { summaryAgent } from './agents/summary-agent';
+import { chironAgent } from './agents/chiron';
 import { defineCrew } from './lib/crew';
 
 /**
@@ -17,12 +16,12 @@ import { defineCrew } from './lib/crew';
  * stays independently invocable. With a single member the orchestrator collapses
  * to that member (no routing hop) — it activates at 2+ members.
  *
- * `exampleAgent` and `summaryAgent` are neutral placeholders. Replace them with
- * your project's real agents (designed from templates/AGENT_SPEC.md) — the crew
- * and everything downstream update automatically from this list.
+ * Chiron is the only member for now (PoC). With one member the orchestrator
+ * collapses to Chiron itself. Argus is a separate agent reached over A2A, not a
+ * crew member.
  */
 export const crew = defineCrew({
-  members: [exampleAgent, summaryAgent],
+  members: [chironAgent],
 });
 
 export { crewAgents } from './lib/crew';

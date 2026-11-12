@@ -130,11 +130,22 @@ lives in `src/mastra/` (`index.ts` instance, `agents/`, `tools/`). ESM, no decor
 
 ## 4. Shared (`packages/shared/`)
 
-| Dependency  | Version | Purpose                         |
-| ----------- | ------- | ------------------------------- |
-| zod         | ^3      | Schema validation + env parsing |
-| @types/node | ^24     | `process` types for env parser  |
-| typescript  | ^5.9    | Type definitions                |
+| Dependency  | Version | Purpose                                                                       |
+| ----------- | ------- | ----------------------------------------------------------------------------- |
+| zod         | ^3      | Schema validation + env parsing                                               |
+| drizzle-orm | ^0.45.4 | Chiron's tracker: typed queries on the `chiron_app` schema (`src/chiron-db/`) |
+| pg          | ^8.23   | Postgres driver for the tracker pool                                          |
+| @types/pg   | ^8.23   | Types for `pg` (dev)                                                          |
+| @types/node | ^24     | `process` types for env parser                                                |
+| typescript  | ^5.9    | Type definitions                                                              |
+
+> **Two entries.** `@precast/shared` is browser-safe (types, zod schemas, the sensitive-data
+> detector). `@precast/shared/server` is server-only: the tracker database (`pg`, Drizzle) and the
+> send rules (`node:crypto`). Never import `/server` from a client component.
+>
+> **Tracker migrations** are embedded SQL in `src/chiron-db/migrations.ts`, applied on first use
+> by `chironDb()` under an advisory lock (no migrations folder to copy into the Mastra or Next
+> bundle). Append-only; tables live in schema `chiron_app` (`projectSchema('app')`).
 
 > `packages/shared` compiles to **ESM** (NodeNext) so Mastra's bundler can
 > statically analyze its named exports; relative imports use `.js` extensions.

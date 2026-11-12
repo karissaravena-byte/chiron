@@ -160,6 +160,11 @@ export const EnvSchema = z.object({
   // Off when unset — no auth is applied.
   AGENT_API_TOKEN: z.string().optional(),
 
+  // ── Chiron ───────────────────────────────────────────────────────────────
+  // Who may approve a send (DATA_MODEL D-009): "karissa:<email>,mikki:<email>". Read by the web
+  // app when it records an approval; anything malformed is dropped, never added.
+  CHIRON_APPROVERS: z.string().optional(),
+
   // ── Logging ──────────────────────────────────────────────────────────────
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
 });
