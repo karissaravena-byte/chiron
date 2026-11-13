@@ -50,7 +50,10 @@ framework specs).
 
 1. **Raya testing: passed (2026-11-12, CH-SMOKE-3).** In Raya, @chiron saved the Nico Ramos test
    hire and blocked a fake TIN with the "please delete" reply. Left to do: set chiron's access back
-   to "Only me" when testing ends; delete the Raya-made Chirons; tidy test hires if wanted.
+   to "Only me" when testing ends; delete the Raya-made Chirons. (Test hires Lia and Nico already removed from the tracker.)
+   2026-11-13: Raya intermittently refuses messages with "@chiron is no longer available to this
+   workspace" (Raya-side; reported). Chiron now answers only what it can check (D-024); after the
+   commit is pushed, Karissa presses **Pull latest & redeploy**.
    Background: hosted `chiron` also works end to end in Studio: `676e52e` is
    deployed (container up since 02:43Z 2026-11-12; Studio's "Deployed commit" field lagged at
    `28a54ba`, so trust the runtime logs), and a Studio chat saved the Lia Mendoza test hire to

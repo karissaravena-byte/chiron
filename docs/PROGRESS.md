@@ -91,7 +91,7 @@ You MUST update PROGRESS.md when you:
 - [x] Imported the agent into AgentBase (namespace "Chiron", Production, `DATABASE_URL`; "Only me"); Synced and Running on `28a54ba` (2026-11-12). The import page reported `provider_failed` ("ReplicaSet … has successfully progressed") although the deploy succeeded; the agent synced afterwards with no retry
 - [x] First chat with the hosted `chiron` in Studio's Run tab (2026-11-12, after `676e52e`): the Lia Mendoza test hire was prepared and **saved to the tracker** by the hosted agent; the database host resolved from the new container
 - [x] Raya test (2026-11-12): @chiron prepared and saved the Nico Ramos test hire (4 drafts waiting), and a fake TIN got the "please delete that message" reply (CH-SMOKE-3)
-- [ ] After testing: set chiron's access back to "Only me"; delete the Raya-made Chirons; tidy the test hires (Lia, Nico) from the tracker if wanted
+- [ ] After testing: set chiron's access back to "Only me"; delete the Raya-made Chirons (test hires Lia and Nico were removed from the tracker on 2026-11-12: 2 talents, 2 onboardings, 26 steps, 8 unapproved drafts; Andi and Migs remain)
 - [ ] Clean up: four agents named Chiron in the registry (this import plus three Raya-made "composed"/proxy ones); delete the Raya ones once the hosted agent works in Raya
 - [ ] Next: Karissa's real checklist, templates, welcome emails and contact list as playbook data (F4, F6, D-007)
 - [ ] Next: record step facts (F9), then C3/C4 drafts
@@ -125,6 +125,7 @@ You MUST update PROGRESS.md when you:
 | D-020 | `@precast/shared/server` entry for database + send rules                                          | 2026-11-11 | The main entry is imported by client components; `pg` and `node:crypto` must not reach the browser bundle                                                                                                                                                                                                                                                                                                                                                                                    |
 | D-021 | Tracker migrations are embedded SQL, applied on first use                                         | 2026-11-11 | No migrations folder to copy into the Mastra or Next bundles; advisory lock stops the two apps racing                                                                                                                                                                                                                                                                                                                                                                                        |
 | D-022 | Dark-mode muted status colours derived as faint tints in `globals.css`                            | 2026-11-11 | APC dark values for warning/error/success-muted are full-strength; a dark warning banner was yellow on yellow. Banner/FieldStatus only; light mode untouched (B-010)                                                                                                                                                                                                                                                                                                                         |
+| D-024 | In chat, Chiron only prepares new hires; status questions point to the app                        | 2026-11-13 | Raya sends earlier messages with each new one, and Chiron has no tool that reads the tracker; it answered "what's pending" from stale chat text (Nico, already deleted). Now: act on the newest message only; status questions get "can't see the tracker from chat yet, see Waiting for you / Onboarding"; offboarding, manpower, email, calendar, Slack, holidays, reminders get "can't do that yet". A real read ability is a later build                                                 |
 | D-023 | No Mastra storage for Chiron                                                                      | 2026-11-12 | Precast's default Postgres store is initialised at boot and an unreachable database ended the process (B-013). Chiron uses none of it: no chat memory (D-012), no workflows, A2A tasks in memory; records go to the tracker. Also keeps chat text out of Mastra's tables. Re-add only if Mastra's scheduler or workflows are needed (F21 tracking runs may use AgentBase schedules instead). Tracker pool also gets an `error` listener so a dropped idle connection can't crash the process |
 | D-004 | Placeholder agents kept on disk, unregistered                                                     | 2026-11-10 | `crew.ts` registers only `chiron`; example/summary agent files stay until hardening so existing specs keep compiling                                                                                                                                                                                                                                                                                                                                                                         |
 
@@ -154,7 +155,7 @@ You MUST update PROGRESS.md when you:
 
 | Area                    | Tests                                                                      | Status  |
 | ----------------------- | -------------------------------------------------------------------------- | ------- |
-| All Vitest (2026-11-12) | shared 65 · a2ui 34 · web 363 (+1 skipped) · agents 169                    | Passing |
+| All Vitest (2026-11-13) | shared 65 · a2ui 34 · web 363 (+1 skipped) · agents 170                    | Passing |
 | Playwright (2026-11-12) | 13 specs against the live preview: 12 passing, 1 known (B-008)             | 12/13   |
 | Playwright, CI-like     | Fresh server, no database or secret: 10 passing, 3 skipped (need sign-in)  | Passing |
 | GitHub CI (`28a54ba`)   | `verify`, `e2e` and both Docker images green (first run's `e2e` was B-012) | Passing |
@@ -178,6 +179,23 @@ You MUST update PROGRESS.md when you:
 
 ## 8. Session Log
 
+<auto-journal: 2026-11-13 09:14:11 — file edit>
+
+<auto-journal: 2026-11-13 09:14:07 — file edit>
+
+<auto-journal: 2026-11-13 09:13:55 — file edit>
+
+<auto-journal: 2026-11-13 09:13:53 — file edit>
+
+<auto-journal: 2026-11-13 09:13:51 — file edit>
+
+<auto-journal: 2026-11-13 09:13:48 — file edit>
+
+<auto-journal: 2026-11-13 09:13:47 — file edit>
+
+<auto-journal: 2026-11-13 09:12:47 — file edit>
+
+<auto-journal: 2026-11-13 09:11:21 — file edit>
 <auto-journal: 2026-11-12 03:23:55 — file edit>
 
 <auto-journal: 2026-11-12 03:23:45 — file edit>
@@ -309,6 +327,8 @@ You MUST update PROGRESS.md when you:
 
 <auto-journal: 2026-11-10 08:48:34 — file edit>
 <!-- Newest first. The progress-stamp hook appends <auto-journal> markers here. -->
+
+- **2026-11-13 · Claude Code · Raya errors diagnosed; Chiron kept to what it can check (D-024) ·** Raya's "@chiron is no longer available to this workspace" is intermittent and Raya-side: per Raya's Activity, messages minutes apart alternate between answered and refused while chiron stayed "Organization", Ready, Running, 100% call success in Studio (refused messages never reached it); the same error hit @chief-of-staff-ea-agent on 29 Oct. Reported wording drafted for the Raya/AgentBase team. Studio also showed `407bbc3` deployed and two metric streams 6 s apart (possibly two containers). Found in the same chat: Chiron answered "how many pending" from Raya's chat history (Nico, already deleted). Fixed in the instructions (newest message only; status → point to the app; unbuilt asks → one line), guard CH-AGT-4, live check CH-SMOKE-4. **Verified:** agents Vitest 170, lint, typecheck; live model on the built bundle. · `apps/agents/src/mastra/{agents/chiron.ts,chiron-tools.spec.ts}`, docs, README
 
 - **2026-11-12 · Claude Code · Chiron tested in Studio and Raya (hosted) ·** After `676e52e` was deployed, a Studio chat saved the Lia Mendoza test hire to the tracker from the hosted agent (the database host resolved from the new container). Raya's agent list shows only organisation-shared agents, so Karissa set chiron's access to "Organization" temporarily (not "Publish publicly", which is the public registry); Raya listed @chiron after a minute or two. In Raya, with Karissa's go-ahead, sent a Nico Ramos test hire (saved, 4 drafts waiting) and a fake TIN (blocked with the fixed reply; B-011 not an issue in Raya). CH-SMOKE-3. Next: revert access to "Only me" after testing; delete the Raya-made Chirons. · docs
 

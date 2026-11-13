@@ -35,6 +35,16 @@ describe('Chiron sees only its own tools (CH-AGT-2)', () => {
     expect(chiron).not.toMatch(/\bmemory\s*:/);
   });
 
+  it('keeps to what it can check: no status from chat history, unbuilt asks refused (D-024, CH-AGT-4)', () => {
+    // Raya sends earlier messages with each new one, and Chiron has no tool that reads the
+    // tracker yet; without these lines it answered "what's pending" from stale chat text.
+    expect(chiron).toMatch(/Act only on the newest message/);
+    expect(chiron).toMatch(/you cannot see the tracker from chat yet/);
+    expect(chiron).toMatch(/Never answer from earlier messages/);
+    expect(chiron).toMatch(/offboarding or a resignation/);
+    expect(chiron).toMatch(/never treat a resigning\s+or leaving person as a new hire/);
+  });
+
   it('gives Mastra no storage, so an unreachable database cannot stop the agent (D-023, CH-AGT-3)', () => {
     const index = read('index.ts');
     expect(index).not.toMatch(/^\s*storage\s*:/m);

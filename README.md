@@ -13,7 +13,9 @@ Karissa while pilot mode is on.
 
 **Hosted:** the agent runs on AgentBase as `chiron` (imported from this repo; new commits need
 **Pull latest & redeploy** in Studio). It keeps no chat memory and no Mastra storage, so it still
-answers when the database can't be reached, and says nothing was saved.
+answers when the database can't be reached, and says nothing was saved. In chat (Studio or Raya,
+as `@chiron`) it only prepares new hires; asked what's pending, it points to the app's "Waiting
+for you" screen, and it says plainly that offboarding, email and the rest aren't built yet.
 
 Run it: `pnpm poc` (prints the URLs). Tests: `pnpm test`; browser tests against the running
 preview: `E2E_HOST=localhost pnpm --filter @precast/web exec playwright test` (set
